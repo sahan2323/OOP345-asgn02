@@ -2,20 +2,33 @@
 #define SENECA_CHARACTERTPL_H
 
 #include "character.h"
+#include <iostream>
+#include <type_traits>
 
 namespace seneca
 {
-    template<typename T>
+    template <typename T>
     class CharacterTpl : public Character
     {
         int m_healthMax{};
         T m_health{};
+
     public:
         CharacterTpl(const char* name, int healthMax)
-            : Character(name), m_healthMax{ healthMax }, m_health{ healthMax }
-        {}
+            : Character(name), m_healthMax{ healthMax }
+        {
+            if constexpr (std::is_constructible_v<T, int>)
+            {
+                m_health = T(healthMax);
+            }
+            else
+            {
+                m_health = T{};
+                // if type T has operator= for int, this works:
+                m_health = healthMax;
+            }
+        }
 
-        // health accessors
         int getHealth() const override
         {
             return static_cast<int>(m_health);
@@ -40,13 +53,15 @@ namespace seneca
         void takeDamage(int dmg) override
         {
             m_health -= dmg;
-            if (getHealth() <= 0)
+            if (static_cast<int>(m_health) <= 0)
             {
-                std::cout << getName() << " has been defeated!\n";
+                std::cout << getName() << " has been defeated!" << std::endl;
             }
             else
             {
-                std::cout << getName() << " took " << dmg << " damage, " << getHealth() << " health remaining.\n";
+                std::cout << getName() << " took " << dmg
+                          << " damage, " << static_cast<int>(m_health)
+                          << " health remaining." << std::endl;
             }
         }
 
