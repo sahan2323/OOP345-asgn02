@@ -1,6 +1,6 @@
 #ifndef SENECA_BARBARIAN_H
 #define SENECA_BARBARIAN_H
-
+#include <cmath>
 #include "characterTpl.h"
 
 namespace seneca
@@ -22,11 +22,21 @@ namespace seneca
             m_weapon[1] = secondaryWeapon;
         }
 
+        // int getAttackAmnt() const override
+        // {
+        //     double w1 = static_cast<double>(m_weapon[0]);
+        //     double w2 = static_cast<double>(m_weapon[1]);
+        //     int dmg = m_baseAttack + static_cast<int>(w1 / 2.0) + static_cast<int>(w2 / 2.0);
+        //     return dmg;
+        // }
+
         int getAttackAmnt() const override
         {
             double w1 = static_cast<double>(m_weapon[0]);
             double w2 = static_cast<double>(m_weapon[1]);
-            int dmg = m_baseAttack + static_cast<int>(w1 / 2.0) + static_cast<int>(w2 / 2.0);
+            int dmg = m_baseAttack
+            + static_cast<int>(std::round(w1 / 2.0))
+            + static_cast<int>(std::round(w2 / 2.0));
             return dmg;
         }
 
